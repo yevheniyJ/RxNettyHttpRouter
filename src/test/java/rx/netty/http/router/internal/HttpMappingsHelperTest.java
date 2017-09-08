@@ -16,13 +16,19 @@ public class HttpMappingsHelperTest {
     public void matchTest() {
         String target1 = "/region/";
         String target2 = "/region/Lviv/";
-        String target3 = "/location/Lviv";
-        String target4 = "/region/Lviv/Ukraine";
+        String target3 = "/region/Lviv";
+        String target4 = "region/Lviv";
+        String target5 = "region/Lviv/";
+        String target6 = "/location/Lviv";
+        String target7 = "/region/Lviv/Ukraine";
 
         assertFalse(match(REGION_MAPPING, target1));
         assertTrue(match(REGION_MAPPING, target2));
-        assertFalse(match(REGION_MAPPING, target3));
-        assertFalse(match(REGION_MAPPING, target4));
+        assertTrue(match(REGION_MAPPING, target3));
+        assertTrue(match(REGION_MAPPING, target4));
+        assertTrue(match(REGION_MAPPING, target5));
+        assertFalse(match(REGION_MAPPING, target6));
+        assertFalse(match(REGION_MAPPING, target7));
     }
 
     @Test
