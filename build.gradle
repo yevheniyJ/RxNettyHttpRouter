@@ -1,0 +1,20 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+def rxNettyVersion = '0.5.2'
+def lombokVersion = '1.16.18'
+def junitVersion = '4.12'
+
+dependencies {
+    compile "io.reactivex:rxnetty-http:$rxNettyVersion"
+    compile "io.reactivex:rxnetty-tcp:$rxNettyVersion"
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    testCompile "junit:junit:$junitVersion"
+}

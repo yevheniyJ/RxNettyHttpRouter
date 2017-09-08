@@ -1,0 +1,64 @@
+package rx.netty.http.router.internal;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Util class for verifying http request uri to mapping and retrieving from request path variables
+ */
+public final class HttpMappingsHelper {
+
+    private static final char PATH_VARIABLE_CHAR = ':';
+    private static final String PATH_SEPARATOR = "/";
+
+    private HttpMappingsHelper() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param mapping mapping from map
+     * @param target  request uri
+     * @return true if request uri match mapping from map, for example /region/:city will match for uri /region/Lviv and won't match for uri region/Ukraine/Lviv or /location/Lviv
+     */
+    public static boolean match(String mapping, String target) {
+        String[] mappingsSplit = mapping.split(PATH_SEPARATOR);
+        String[] targetSplit = target.split(PATH_SEPARATOR);
+        if (mappingsSplit.length == targetSplit.length) {
+            for (int i = 0; i < mappingsSplit.length; i++) {
+                String subMapping = mappingsSplit[i];
+                if ((subMapping.length() == 0 || subMapping.charAt(0) != PATH_VARIABLE_CHAR) && !subMapping.equals(targetSplit[i])) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param mapping mapping from map
+     * @param target  request uri
+     * @return map of path params, for example mapping = /region/:city and target = /region/Lviv will create map with single entry : key = city and value = Lviv
+     */
+    public static Map<String, String> getPathVariables(String mapping, String target) {
+        Map<String, String> map = new HashMap<>();
+        //uri stabilization
+        if (mapping.startsWith("/") && !target.startsWith(PATH_SEPARATOR)) {
+            target = "/" + target;
+        } else if (!mapping.startsWith(PATH_SEPARATOR) && target.startsWith(PATH_SEPARATOR)) {
+            mapping = "/" + mapping;
+        }
+        String[] splitMapping = mapping.split(PATH_SEPARATOR);
+        String[] splitTarget = target.split(PATH_SEPARATOR);
+        for (int i = 0; i < splitMapping.length; i++) {
+            String subPath = splitMapping[i];
+            if (subPath.length() > 0 && subPath.charAt(0) == PATH_VARIABLE_CHAR) {
+                String key = subPath.substring(1);
+                String value = splitTarget[i];
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+}
