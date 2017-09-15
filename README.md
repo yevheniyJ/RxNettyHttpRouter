@@ -41,3 +41,23 @@ public class HelloWorld {
 ```
 
 And visit : http://localhost:8080/hello
+
+Also extension supports path variables:
+
+```java
+public class Echo {
+
+    public static void main(String[] args) {
+        HttpRouter router = new HttpRouter()
+                .addRouteHandler(
+                        "/echo/:name",
+                        HttpMethod.GET,
+                        (req, resp) -> resp.writeString(Observable.just("Hello " + req.getPathVariables().get("name")))
+                );
+        HttpServer
+                .newServer(8080)
+                .start(router)
+                .awaitShutdown();
+    }
+}
+```
